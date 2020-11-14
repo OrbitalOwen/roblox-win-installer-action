@@ -53,6 +53,12 @@ async function install() {
 	const path = await downloadRelease();
 
 	const options = { cwd: path };
+
+	await exec(
+		"Get-ChildItem $args -Force | Format-Wide Name -AutoSize",
+		[],
+		options
+	);
 	await exec("pip", ["install", "-r requirements.txt"], options);
 	await exec("python", ["install.py", cookie], options);
 
