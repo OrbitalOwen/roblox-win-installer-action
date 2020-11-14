@@ -9,6 +9,6 @@ jobs:
       - name: Test action
         uses: ./ # Uses an action in the root directory
         with:
-          cookie: ''
+          cookie: $$ {{ secrets.ROBLOSECURITY }}
           version: '0.4'
           token: ${{ secrets.GITHUB_TOKEN }}
