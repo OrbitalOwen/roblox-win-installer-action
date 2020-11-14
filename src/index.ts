@@ -71,13 +71,22 @@ async function downloadRelease() {
 	return repoDirectory;
 }
 
+async function execCommand(command: string, cwd: string) {
+	const options = { cwd, timeout: INSTALL_TIMEOUT };
+
+	const { stdout, stderr } = await exec(command, options);
+
+	if (stdout) {
+		core.info(stdout);
+	} else {
+		core.error(stderr);
+	}
+}
 async function install() {
-	const path = await downloadRelease();
+	const cwd = await downloadRelease();
 
-	const options = { cwd: path, timeout: INSTALL_TIMEOUT };
-
-	await exec("pip install -r requirements.txt", options);
-	await exec(`python install.py ${cookie}`, options);
+	await execCommand("pip install -r requirements.txt", cwd);
+	await execCommand("python install.py", cwd);
 
 	core.info("Installation completed");
 }
