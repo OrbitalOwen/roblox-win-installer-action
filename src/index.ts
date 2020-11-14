@@ -23,9 +23,11 @@ async function getRelease() {
 
 		for (const release of response.data) {
 			if (release.tag_name === version) {
+				core.info(`Using version ${release.tag_name}`);
 				return release;
 			}
 		}
+
 		throw new Error(
 			`${GITHUB_USER}/${REPO_NAME} release ${version} not found`
 		);
@@ -34,6 +36,8 @@ async function getRelease() {
 			owner: GITHUB_USER,
 			repo: REPO_NAME,
 		});
+
+		core.info(`Using version ${response.data.tag_name}`);
 
 		return response.data;
 	}
