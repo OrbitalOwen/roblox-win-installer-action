@@ -9743,6 +9743,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+const fs = __importStar(__webpack_require__(5747));
+const path = __importStar(__webpack_require__(5622));
 const core = __importStar(__webpack_require__(2186));
 const exec_1 = __webpack_require__(1514);
 const github_1 = __webpack_require__(5438);
@@ -9774,6 +9776,13 @@ async function getRelease() {
         return response.data;
     }
 }
+async function getChildDir(directory) {
+    const files = await fs.promises.readdir(directory);
+    const childDirectory = files.find((file) => {
+        return fs.statSync(path.join(directory, file)).isDirectory();
+    });
+    return childDirectory;
+}
 async function downloadRelease() {
     const release = await getRelease();
     core.info(`Downloading release ${release.zipball_url}`);
@@ -9781,7 +9790,12 @@ async function downloadRelease() {
     core.info(`Downloaded zip ${zipPath}`);
     const extractedPath = await tool_cache_1.extractZip(zipPath);
     core.info(`Extracted zip ${extractedPath}`);
-    return extractedPath;
+    const repoDirectory = await getChildDir(extractedPath);
+    if (!repoDirectory) {
+        throw new Error("Directory not found");
+    }
+    core.info(`Got repo directory ${repoDirectory}`);
+    return repoDirectory;
 }
 async function install() {
     const path = await downloadRelease();

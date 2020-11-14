@@ -1,3 +1,5 @@
+import * as fs from "fs";
+import * as path from "path";
 import * as core from "@actions/core";
 import { exec } from "@actions/exec";
 import { getOctokit } from "@actions/github";
@@ -37,6 +39,15 @@ async function getRelease() {
 	}
 }
 
+async function getChildDir(directory: string) {
+	const files = await fs.promises.readdir(directory);
+	const childDirectory = files.find((file) => {
+		return fs.statSync(path.join(directory, file)).isDirectory();
+	});
+
+	return childDirectory;
+}
+
 async function downloadRelease() {
 	const release = await getRelease();
 
@@ -45,8 +56,13 @@ async function downloadRelease() {
 	core.info(`Downloaded zip ${zipPath}`);
 	const extractedPath = await extractZip(zipPath);
 	core.info(`Extracted zip ${extractedPath}`);
+	const repoDirectory = await getChildDir(extractedPath);
+	if (!repoDirectory) {
+		throw new Error("Directory not found");
+	}
+	core.info(`Got repo directory ${repoDirectory}`);
 
-	return extractedPath;
+	return repoDirectory;
 }
 
 async function install() {
