@@ -7,7 +7,7 @@ This is a GitHub action wrapper for [roblox-win-installer](https://github.com/Or
 ```yml
 - uses: OrbitalOwen/roblox-win-installer-action@1.0
   with:
-      cookie: $$ {{ secrets.ROBLOSECURITY }}
+      cookie: ${{ secrets.ROBLOSECURITY }}
       token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
