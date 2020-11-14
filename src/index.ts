@@ -1,4 +1,5 @@
 import * as core from "@actions/core";
+import { exec } from "@actions/exec";
 import { getOctokit } from "@actions/github";
 import { downloadTool, extractZip } from "@actions/tool-cache";
 
@@ -50,6 +51,12 @@ async function downloadRelease() {
 
 async function install() {
 	const path = await downloadRelease();
+
+	const options = { cwd: path };
+	await exec("pip", ["install", "-r requirements.txt"], options);
+	await exec("python", ["install.py", cookie], options);
+
+	core.info("Installation completed");
 }
 
 install().catch((error) => {
