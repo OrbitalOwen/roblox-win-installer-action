@@ -1,17 +1,14 @@
 import * as fs from "fs";
 import * as path from "path";
-import * as util from "util";
 import * as child_process from "child_process";
 
 import * as core from "@actions/core";
 import { getOctokit } from "@actions/github";
 import { downloadTool, extractZip } from "@actions/tool-cache";
 
-const exec = util.promisify(child_process.exec);
-
 const GITHUB_USER = "OrbitalOwen";
 const REPO_NAME = "roblox-win-installer";
-const INSTALL_TIMEOUT = 60 * 5 * 1000;
+const COMMAND_TIMEOUT = 60 * 5 * 1000;
 
 const cookie = core.getInput("cookie");
 const version = core.getInput("version");
@@ -71,22 +68,38 @@ async function downloadRelease() {
 	return repoDirectory;
 }
 
-async function execCommand(command: string, cwd: string) {
-	const options = { cwd, timeout: INSTALL_TIMEOUT };
+function execCommand(command: string, cwd: string, timeout?: number) {
+	return new Promise((resolve, reject) => {
+		const process = child_process.spawn(command, { cwd });
 
-	const { stdout, stderr } = await exec(command, options);
+		process.stdout.on("data", (data) => {
+			core.info(data);
+		});
 
-	if (stdout) {
-		core.info(stdout);
-	} else {
-		core.error(stderr);
-	}
+		process.stderr.on("data", (data) => {
+			core.error(data);
+		});
+
+		process.on("close", (code) => {
+			if (code === 0) {
+				resolve();
+			} else {
+				reject();
+			}
+		});
+
+		if (timeout) {
+			setTimeout(() => {
+				process.kill();
+			}, timeout);
+		}
+	});
 }
 async function install() {
 	const cwd = await downloadRelease();
 
 	await execCommand("pip install -r requirements.txt", cwd);
-	await execCommand(`python install.py ${cookie}`, cwd);
+	await execCommand(`python install.py ${cookie}`, cwd, COMMAND_TIMEOUT);
 
 	core.info("Installation completed");
 }

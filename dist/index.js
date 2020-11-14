@@ -9745,15 +9745,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const fs = __importStar(__webpack_require__(5747));
 const path = __importStar(__webpack_require__(5622));
-const util = __importStar(__webpack_require__(1669));
 const child_process = __importStar(__webpack_require__(3129));
 const core = __importStar(__webpack_require__(2186));
 const github_1 = __webpack_require__(5438);
 const tool_cache_1 = __webpack_require__(7784);
-const exec = util.promisify(child_process.exec);
 const GITHUB_USER = "OrbitalOwen";
 const REPO_NAME = "roblox-win-installer";
-const INSTALL_TIMEOUT = 60 * 5 * 1000;
+const COMMAND_TIMEOUT = 60 * 5 * 1000;
 const cookie = core.getInput("cookie");
 const version = core.getInput("version");
 const githubToken = core.getInput("token");
@@ -9798,20 +9796,34 @@ async function downloadRelease() {
     const repoDirectory = await getChildDir(extractedPath);
     return repoDirectory;
 }
-async function execCommand(command, cwd) {
-    const options = { cwd, timeout: INSTALL_TIMEOUT };
-    const { stdout, stderr } = await exec(command, options);
-    if (stdout) {
-        core.info(stdout);
-    }
-    else {
-        core.error(stderr);
-    }
+function execCommand(command, cwd, timeout) {
+    return new Promise((resolve, reject) => {
+        const process = child_process.spawn(command, { cwd });
+        process.stdout.on("data", (data) => {
+            core.info(data);
+        });
+        process.stderr.on("data", (data) => {
+            core.error(data);
+        });
+        process.on("close", (code) => {
+            if (code === 0) {
+                resolve();
+            }
+            else {
+                reject();
+            }
+        });
+        if (timeout) {
+            setTimeout(() => {
+                process.kill();
+            }, timeout);
+        }
+    });
 }
 async function install() {
     const cwd = await downloadRelease();
     await execCommand("pip install -r requirements.txt", cwd);
-    await execCommand(`python install.py ${cookie}`, cwd);
+    await execCommand(`python install.py ${cookie}`, cwd, COMMAND_TIMEOUT);
     core.info("Installation completed");
 }
 install().catch((error) => {
