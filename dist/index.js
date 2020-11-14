@@ -9796,9 +9796,9 @@ async function downloadRelease() {
     const repoDirectory = await getChildDir(extractedPath);
     return repoDirectory;
 }
-function execCommand(command, cwd, timeout) {
+function execCommand(command, args, cwd, timeout) {
     return new Promise((resolve, reject) => {
-        const process = child_process.spawn(command, { cwd });
+        const process = child_process.spawn(command, args, { cwd });
         process.stdout.on("data", (data) => {
             core.info(data);
         });
@@ -9825,8 +9825,8 @@ function execCommand(command, cwd, timeout) {
 }
 async function install() {
     const cwd = await downloadRelease();
-    await execCommand("pip install -r requirements.txt", cwd);
-    await execCommand(`python install.py ${cookie}`, cwd, COMMAND_TIMEOUT);
+    await execCommand("pip install", ["-r", "requirements.txt"], cwd);
+    await execCommand(`python install.py`, [cookie], cwd, COMMAND_TIMEOUT);
     core.info("Installation completed");
 }
 install().catch((error) => {
