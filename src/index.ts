@@ -86,7 +86,7 @@ async function install() {
 	const cwd = await downloadRelease();
 
 	await execCommand("pip install -r requirements.txt", cwd);
-	await execCommand("python install.py", cwd);
+	await execCommand(`python install.py ${cookie}`, cwd);
 
 	core.info("Installation completed");
 }
