@@ -80,11 +80,15 @@ function execCommand(command: string, cwd: string, timeout?: number) {
 			core.error(data);
 		});
 
+		process.on("error", (error) => {
+			reject(error);
+		});
+
 		process.on("close", (code) => {
 			if (code === 0) {
 				resolve();
 			} else {
-				reject();
+				reject(`Process exited with: ${code}`);
 			}
 		});
 

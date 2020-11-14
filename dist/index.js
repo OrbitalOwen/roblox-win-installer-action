@@ -9805,12 +9805,15 @@ function execCommand(command, cwd, timeout) {
         process.stderr.on("data", (data) => {
             core.error(data);
         });
+        process.on("error", (error) => {
+            reject(error);
+        });
         process.on("close", (code) => {
             if (code === 0) {
                 resolve();
             }
             else {
-                reject();
+                reject(`Process exited with: ${code}`);
             }
         });
         if (timeout) {
