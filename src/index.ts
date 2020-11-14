@@ -55,7 +55,7 @@ async function install() {
 	const options = { cwd: path };
 
 	await exec(
-		"Get-ChildItem $args -Force | Format-Wide Name -AutoSize",
+		"Get-ChildItem . | Sort-Object -Property LastWriteTime",
 		[],
 		options
 	);

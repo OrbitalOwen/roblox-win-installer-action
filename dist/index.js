@@ -9786,6 +9786,7 @@ async function downloadRelease() {
 async function install() {
     const path = await downloadRelease();
     const options = { cwd: path };
+    await exec_1.exec("Get-ChildItem . | Sort-Object -Property LastWriteTime", [], options);
     await exec_1.exec("pip", ["install", "-r requirements.txt"], options);
     await exec_1.exec("python", ["install.py", cookie], options);
     core.info("Installation completed");
