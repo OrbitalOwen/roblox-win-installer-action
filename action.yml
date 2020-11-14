@@ -1,0 +1,15 @@
+name: 'Install Roblox Studio'
+description: 'Installs the latest version of Roblox Studio'
+inputs:
+  cookie:
+    description: 'The .ROBLOSECURITY cookie to use'
+    required: true
+  token:
+    description: 'GitHub token from secrets.GITHUB_TOKEN'
+    required: true
+  version:
+    description: 'The version of roblox-win-installer to use'
+    required: false
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
