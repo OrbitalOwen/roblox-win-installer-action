@@ -39,14 +39,19 @@ async function getRelease() {
 async function downloadRelease() {
 	const release = await getRelease();
 
+	core.info(`Downloading release ${release.zipball_url}`);
 	const zipPath = await downloadTool(release.zipball_url);
+	core.info(`Downloaded zip ${zipPath}`);
 	const extractedPath = await extractZip(zipPath);
+	core.info(`Extracted zip ${extractedPath}`);
 
 	return extractedPath;
 }
 
-async function install() {}
+async function install() {
+	const path = await downloadRelease();
+}
 
-downloadRelease().catch((error) => {
+install().catch((error) => {
 	core.setFailed(error.message);
 });

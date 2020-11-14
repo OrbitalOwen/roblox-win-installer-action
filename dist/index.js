@@ -9775,12 +9775,17 @@ async function getRelease() {
 }
 async function downloadRelease() {
     const release = await getRelease();
+    core.info(`Downloading release ${release.zipball_url}`);
     const zipPath = await tool_cache_1.downloadTool(release.zipball_url);
+    core.info(`Downloaded zip ${zipPath}`);
     const extractedPath = await tool_cache_1.extractZip(zipPath);
+    core.info(`Extracted zip ${extractedPath}`);
     return extractedPath;
 }
-async function install() { }
-downloadRelease().catch((error) => {
+async function install() {
+    const path = await downloadRelease();
+}
+install().catch((error) => {
     core.setFailed(error.message);
 });
 
