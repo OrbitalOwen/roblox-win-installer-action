@@ -45,7 +45,11 @@ async function getChildDir(directory: string) {
 		return fs.statSync(path.join(directory, file)).isDirectory();
 	});
 
-	return childDirectory;
+	if (!childDirectory) {
+		throw new Error("Directory not found");
+	}
+
+	return path.join(directory, childDirectory);
 }
 
 async function downloadRelease() {
@@ -57,9 +61,6 @@ async function downloadRelease() {
 	const extractedPath = await extractZip(zipPath);
 	core.info(`Extracted zip ${extractedPath}`);
 	const repoDirectory = await getChildDir(extractedPath);
-	if (!repoDirectory) {
-		throw new Error("Directory not found");
-	}
 	core.info(`Got repo directory ${repoDirectory}`);
 
 	return repoDirectory;

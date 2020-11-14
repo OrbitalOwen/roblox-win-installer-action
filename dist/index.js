@@ -9781,7 +9781,10 @@ async function getChildDir(directory) {
     const childDirectory = files.find((file) => {
         return fs.statSync(path.join(directory, file)).isDirectory();
     });
-    return childDirectory;
+    if (!childDirectory) {
+        throw new Error("Directory not found");
+    }
+    return path.join(directory, childDirectory);
 }
 async function downloadRelease() {
     const release = await getRelease();
@@ -9791,9 +9794,6 @@ async function downloadRelease() {
     const extractedPath = await tool_cache_1.extractZip(zipPath);
     core.info(`Extracted zip ${extractedPath}`);
     const repoDirectory = await getChildDir(extractedPath);
-    if (!repoDirectory) {
-        throw new Error("Directory not found");
-    }
     core.info(`Got repo directory ${repoDirectory}`);
     return repoDirectory;
 }
