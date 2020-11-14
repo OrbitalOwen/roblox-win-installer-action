@@ -9745,12 +9745,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const fs = __importStar(__webpack_require__(5747));
 const path = __importStar(__webpack_require__(5622));
+const util = __importStar(__webpack_require__(1669));
+const child_process = __importStar(__webpack_require__(3129));
 const core = __importStar(__webpack_require__(2186));
-const exec_1 = __webpack_require__(1514);
 const github_1 = __webpack_require__(5438);
 const tool_cache_1 = __webpack_require__(7784);
+const exec = util.promisify(child_process.exec);
 const GITHUB_USER = "OrbitalOwen";
 const REPO_NAME = "roblox-win-installer";
+const INSTALL_TIMEOUT = 60 * 5 * 1000;
 const cookie = core.getInput("cookie");
 const version = core.getInput("version");
 const githubToken = core.getInput("token");
@@ -9797,10 +9800,9 @@ async function downloadRelease() {
 }
 async function install() {
     const path = await downloadRelease();
-    const options = { cwd: path };
-    await exec_1.exec("ls", [], options);
-    await exec_1.exec("pip install -r requirements.txt", [], options);
-    await exec_1.exec(`python install.py ${cookie}`, [], options);
+    const options = { cwd: path, timeout: INSTALL_TIMEOUT };
+    await exec("pip install -r requirements.txt", options);
+    await exec(`python install.py ${cookie}`, options);
     core.info("Installation completed");
 }
 install().catch((error) => {

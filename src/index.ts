@@ -1,12 +1,17 @@
 import * as fs from "fs";
 import * as path from "path";
+import * as util from "util";
+import * as child_process from "child_process";
+
 import * as core from "@actions/core";
-import { exec } from "@actions/exec";
 import { getOctokit } from "@actions/github";
 import { downloadTool, extractZip } from "@actions/tool-cache";
 
+const exec = util.promisify(child_process.exec);
+
 const GITHUB_USER = "OrbitalOwen";
 const REPO_NAME = "roblox-win-installer";
+const INSTALL_TIMEOUT = 60 * 5 * 1000;
 
 const cookie = core.getInput("cookie");
 const version = core.getInput("version");
@@ -69,11 +74,10 @@ async function downloadRelease() {
 async function install() {
 	const path = await downloadRelease();
 
-	const options = { cwd: path };
+	const options = { cwd: path, timeout: INSTALL_TIMEOUT };
 
-	await exec("ls", [], options);
-	await exec("pip install -r requirements.txt", [], options);
-	await exec(`python install.py ${cookie}`, [], options);
+	await exec("pip install -r requirements.txt", options);
+	await exec(`python install.py ${cookie}`, options);
 
 	core.info("Installation completed");
 }
