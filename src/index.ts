@@ -113,6 +113,10 @@ async function install() {
 	core.info("Installation completed");
 }
 
-install().catch((error) => {
-	core.setFailed(error.message);
-});
+install()
+	.then(() => {
+		process.exit(0);
+	})
+	.catch((error) => {
+		core.setFailed(error.message);
+	});

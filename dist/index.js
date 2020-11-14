@@ -9829,7 +9829,11 @@ async function install() {
     await execCommand(`python`, ["install.py", cookie], cwd, COMMAND_TIMEOUT);
     core.info("Installation completed");
 }
-install().catch((error) => {
+install()
+    .then(() => {
+    process.exit(0);
+})
+    .catch((error) => {
     core.setFailed(error.message);
 });
 
