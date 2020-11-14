@@ -1,5 +1,4 @@
 import core from "@actions/core";
-import exec from "@actions/exec";
 import { getOctokit } from "@actions/github";
 import { downloadTool, extractZip } from "@actions/tool-cache";
 
