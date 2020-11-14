@@ -9788,21 +9788,17 @@ async function getChildDir(directory) {
 }
 async function downloadRelease() {
     const release = await getRelease();
-    core.info(`Downloading release ${release.zipball_url}`);
     const zipPath = await tool_cache_1.downloadTool(release.zipball_url);
-    core.info(`Downloaded zip ${zipPath}`);
     const extractedPath = await tool_cache_1.extractZip(zipPath);
-    core.info(`Extracted zip ${extractedPath}`);
     const repoDirectory = await getChildDir(extractedPath);
-    core.info(`Got repo directory ${repoDirectory}`);
     return repoDirectory;
 }
 async function install() {
     const path = await downloadRelease();
     const options = { cwd: path };
     await exec_1.exec("ls", [], options);
-    await exec_1.exec("pip", ["install", "-r requirements.txt"], options);
-    await exec_1.exec("python", ["install.py", cookie], options);
+    await exec_1.exec("pip install -r requirements.txt", [], options);
+    await exec_1.exec(`python install.py ${cookie}`, [], options);
     core.info("Installation completed");
 }
 install().catch((error) => {

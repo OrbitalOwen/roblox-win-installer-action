@@ -55,13 +55,9 @@ async function getChildDir(directory: string) {
 async function downloadRelease() {
 	const release = await getRelease();
 
-	core.info(`Downloading release ${release.zipball_url}`);
 	const zipPath = await downloadTool(release.zipball_url);
-	core.info(`Downloaded zip ${zipPath}`);
 	const extractedPath = await extractZip(zipPath);
-	core.info(`Extracted zip ${extractedPath}`);
 	const repoDirectory = await getChildDir(extractedPath);
-	core.info(`Got repo directory ${repoDirectory}`);
 
 	return repoDirectory;
 }
@@ -72,8 +68,8 @@ async function install() {
 	const options = { cwd: path };
 
 	await exec("ls", [], options);
-	await exec("pip", ["install", "-r requirements.txt"], options);
-	await exec("python", ["install.py", cookie], options);
+	await exec("pip install -r requirements.txt", [], options);
+	await exec(`python install.py ${cookie}`, [], options);
 
 	core.info("Installation completed");
 }
