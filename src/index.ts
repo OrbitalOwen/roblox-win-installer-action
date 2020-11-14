@@ -54,11 +54,7 @@ async function install() {
 
 	const options = { cwd: path };
 
-	await exec(
-		"Get-ChildItem . | Sort-Object -Property LastWriteTime",
-		[],
-		options
-	);
+	await exec("ls", [], options);
 	await exec("pip", ["install", "-r requirements.txt"], options);
 	await exec("python", ["install.py", cookie], options);
 
