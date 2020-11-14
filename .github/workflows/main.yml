@@ -10,5 +10,4 @@ jobs:
         uses: ./ # Uses an action in the root directory
         with:
           cookie: $$ {{ secrets.ROBLOSECURITY }}
-          version: '0.4'
           token: ${{ secrets.GITHUB_TOKEN }}
