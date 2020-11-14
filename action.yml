@@ -1,5 +1,9 @@
 name: 'Install Roblox Studio'
 description: 'Installs the latest version of Roblox Studio'
+branding:
+  icon: 'download-cloud'  
+  color: 'blue'
+
 inputs:
   cookie:
     description: 'The .ROBLOSECURITY cookie to use'
