@@ -78,11 +78,11 @@ function execCommand(
 		const process = child_process.spawn(command, args, { cwd });
 
 		process.stdout.on("data", (data) => {
-			core.info(data);
+			core.info(String(data));
 		});
 
 		process.stderr.on("data", (data) => {
-			core.error(data);
+			core.error(String(data));
 		});
 
 		process.on("error", (error) => {
