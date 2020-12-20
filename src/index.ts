@@ -73,16 +73,24 @@ function execCommand(
 	args: string[],
 	cwd: string,
 	timeout?: number
-) {
+): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const process = child_process.spawn(command, args, { cwd });
 
 		process.stdout.on("data", (data) => {
-			core.info(data);
+			try {
+				core.info(data.toString());
+			} catch (err) {
+				console.error(err);
+			}
 		});
 
 		process.stderr.on("data", (data) => {
-			core.error(data);
+			try {
+				core.error(data.toString());
+			} catch (err) {
+				console.error(err);
+			}
 		});
 
 		process.on("error", (error) => {
