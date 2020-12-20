@@ -73,7 +73,7 @@ function execCommand(
 	args: string[],
 	cwd: string,
 	timeout?: number
-) {
+): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const process = child_process.spawn(command, args, { cwd });
 
