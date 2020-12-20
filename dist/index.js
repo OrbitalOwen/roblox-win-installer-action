@@ -9821,7 +9821,7 @@ function execCommand(command, args, cwd, timeout) {
         const process = child_process.spawn(command, args, { cwd });
         process.stdout.on("data", (data) => {
             try {
-                core.info(data.toString());
+                core.info(String(data));
             }
             catch (err) {
                 console.error(err);
@@ -9829,7 +9829,7 @@ function execCommand(command, args, cwd, timeout) {
         });
         process.stderr.on("data", (data) => {
             try {
-                core.error(data.toString());
+                core.error(String(data));
             }
             catch (err) {
                 console.error(err);
