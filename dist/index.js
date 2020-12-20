@@ -317,8 +317,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const tr = __webpack_require__(8159);
+const tr = __importStar(__webpack_require__(8159));
 /**
  * Exec a command.
  * Output will be streamed to the live console.
@@ -361,13 +368,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const os = __webpack_require__(2087);
-const events = __webpack_require__(8614);
-const child = __webpack_require__(3129);
-const path = __webpack_require__(5622);
-const io = __webpack_require__(7436);
-const ioUtil = __webpack_require__(1962);
+const os = __importStar(__webpack_require__(2087));
+const events = __importStar(__webpack_require__(8614));
+const child = __importStar(__webpack_require__(3129));
+const path = __importStar(__webpack_require__(5622));
+const io = __importStar(__webpack_require__(7436));
+const ioUtil = __importStar(__webpack_require__(1962));
 /* eslint-disable @typescript-eslint/unbound-method */
 const IS_WINDOWS = process.platform === 'win32';
 /*
@@ -811,6 +825,12 @@ class ToolRunner extends events.EventEmitter {
                         resolve(exitCode);
                     }
                 });
+                if (this.options.input) {
+                    if (!cp.stdin) {
+                        throw new Error('child process missing stdin');
+                    }
+                    cp.stdin.end(this.options.input);
+                }
             });
         });
     }
@@ -9800,10 +9820,10 @@ function execCommand(command, args, cwd, timeout) {
     return new Promise((resolve, reject) => {
         const process = child_process.spawn(command, args, { cwd });
         process.stdout.on("data", (data) => {
-            core.info(data);
+            core.info(String(data));
         });
         process.stderr.on("data", (data) => {
-            core.error(data);
+            core.error(String(data));
         });
         process.on("error", (error) => {
             reject(error);
