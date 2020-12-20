@@ -2,7 +2,7 @@
   "name": "roblox-win-installer-action",
   "scripts": {
     "build": "tsc",
-    "pack": "ncc build src/main.ts"
+    "pack": "ncc build src/index.ts"
   },
   "dependencies": {
     "@actions/core": "^1.2.3",
